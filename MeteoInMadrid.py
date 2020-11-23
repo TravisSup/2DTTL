@@ -3,18 +3,20 @@ import numpy as np
 import seaborn as sb
 import matplotlib as mp
 import webbrowser
+import os
 
 
 
 
 #Initialisation
 def main():
-    data = pd.read_csv('D:\\Documents\\Supinfo\\Cours\\Asc2\\2_DTTL\Projet_Final\\2DTTL\\weather_madrid.csv', sep=',', index_col=0)
-    myDataFrame = pd.DataFrame(data)    
-    fichier = open("D:\\Documents\\Supinfo\\Cours\\Asc2\\2_DTTL\Projet_Final\\2DTTL\\index.html", "a")
+    os.chdir(os.path.dirname (__file__))
+    data = pd.read_csv('weather_madrid.csv', sep=',', index_col=0) #reads the csv file and stores the content into a variable 
+    myDataFrame = pd.DataFrame(data) #creates a 2-dimensional data structure from the variable where the data from the csv file were stored
+    fichier = open("index.html", "w")
     fichier.write(myDataFrame.to_html(max_rows=10))
     fichier.close
-    webbrowser.open("D:\\Documents\\Supinfo\\Cours\\Asc2\\2_DTTL\Projet_Final\\2DTTL\\index.html")
+    webbrowser.open("index.html")
 
 
 main()
