@@ -8,13 +8,13 @@ import seaborn as sb
 
 
 def narrowSelection(dataToStudy):  
-    print("\nRenommage des attribut : \n")
+    print("\nRenaming of the different attributes : \n")
     print(dataToStudy) #Displays the dataframe
-    print("\nDétail des données : \n")
+    print("\nDetails of the data : \n")
     print(dataToStudy.describe()) #Applies the describe method to the dataframe and displays it
-    print("\nDétail des 'events' : \n")
+    print("\n'Events' details : \n")
     print(dataToStudy["Events"].describe()) #Applies the describe method to the Events attribute of the dataframe and displays it
-    print("\nL'attribut présentant une anomalie est la température")
+    print("\nThe anomalie is present in the Temperature attribute")
 
 
 # Question 4.3 : Utilisez la fonction describe() pour voir les détails de vos données filtrées. Observez les informations et trouvez l'aberration.
@@ -25,9 +25,9 @@ def narrowSelection(dataToStudy):
 def cleaningData(dataToStudy): 
 
 # Question 4.4 : Quel attribut présente une anomalie ?
-    print("""\nNous avons retenu les valeurs suivantes à enlever de notre série de donnée : \n 
-    - La température maximum atteinte (80°C) \n
-    - Le nombre de valeurs (Il n'y a pas lieu de l'afficher sur le Boxplot.De plus, si nous l'affichons, cette valeur sera un outflier)\n""") #Displays Text
+    print("""\nWe have retained the following values ​​to be removed from our data series : \n 
+    - Maximum temperature reached (80°C) \n
+    - Number of values (there is no point in displaying them. Moreover, thoses values would be outfliers if we displayed them)\n""") #Displays Text
 
     
 #Question 4.5 Utilisez Seaborn pour tracer un boxplot de l'attribut anormal. Qu'observez-vous ? Combien y a-t-il de valeurs aberrantes ?
@@ -40,34 +40,35 @@ def cleaningData(dataToStudy):
     filtDataToStudy = filtDataToStudy.apply(lambda x: x[(x>quantFiltDataToStudy.loc[0.25,x.name]-1.5*(quantFiltDataToStudy.loc[0.75, x.name]-quantFiltDataToStudy.loc[0.25, x.name]))\
          & (x<quantFiltDataToStudy.loc[0.25,x.name]+1.5*(quantFiltDataToStudy.loc[0.75, x.name]-quantFiltDataToStudy.loc[0.25, x.name]))])
     cleanedData = pd.concat([dataToStudy.date, filtDataToStudy, dataToStudy.Events]) #Applies the formula to remove aberrant data from the graph
-    sb.boxplot(data=cleanedData) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph   
+    sb.boxplot(data=cleanedData, order=["MeanTemp", "MinTemp", "MaxTemp","MeanHum", "MaxHum", "MinHum","MeanDew", "MinDew", "Dew"]) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph   
     mp.pyplot.show() #Displays the graph 
 
 # Question 5.3 : Que se passe-t-il si vous utilisez la fonction dropna() ?
-    print("\nSans dropna : ")
+    print("\Without dropna : ")
     print (dataToStudy.isnull().sum()) #Makes th summ of the null values present in the dataFrame
-    print("\nAvec dropna : ")
+    print("\With dropna : ")
     print(dataToStudy.dropna().isnull().sum()) #Makes th sum of the null values present in the dataFrame after the removing of Nan values
-    print("La fonction dropna supprime les valeurs Nan de la dataFrame")
+    print("The dropna function removes NaN values from a dataframe")
 # Question 5.4 : Pensez-vous que c'est une bonne idée d'utiliser la fonction dropna()   
-    print("""La fonction dropna n'est pas pertinente à utiliser dans notre cas car elle fausse nos résultats statistique, 
-    elle diminue le nombre de donnée composant la série ce qui faussera les analyse.""")
+    print("""The dropna function isn't relevant for our case because it can distort our statistics, 
+    it may reduce the number of data taken into account for the analysis """)
+
 
 # Question 5.5 : Avez-vous des valeurs manquantes pour l'attribut "Events" ? Combien ?
-    print("\nOui il y a des valeurs null qui sont au nombre de : ")    
+    print("\nYes there are 'Null' values : ")    
     numberOfNanValue = 0
     for content in dataToStudy.drop(["date"], axis=1).isnull().sum(): # loop that displays the sum of the Nan values for each column where there are some
         numberOfNanValue+=content    
     print(numberOfNanValue) #Displays Text
 
 # Question 5.6 : Remplacez tous les événements NaN par "NoEvent" pour indiquer qu'aucun événement ne s'est produit.
-    print("\n Remplacement de tout les NaN dans l'attribut 'Events' par NoEvent : ")
+    print("\n Replacement of all NaN values in the 'Events' attribute by NoEvent : ")
     dataToStudy["Events"].fillna('NoEvent', inplace = True)
     print(dataToStudy)
 
 # Question 5.7 : Expliquez votre choix lorsque vous remplissez toutes les valeurs manquantes.
-    print("""\n Remplacement de tous les NaN dans les attributs 'Temperature, Humididty, Dew, CloudCover' par 
-    la valeur moyenne signifiant que c'était un jour 'normal'(il ne s'est rien passé d'extraordinaire) : """)
+    print("""\n Replacement of all NaN values in the 'Temperature, Humididty, Dew, CloudCover' attributes by  
+    the mean value meaning that it was a 'normal' day (nothing unexpected happened ) : """)
     
    
     temp = dataToStudy.drop(["date", "Events"] ,axis=1)
@@ -75,7 +76,7 @@ def cleaningData(dataToStudy):
     for element in temp.columns:
         dataToStudy[element].fillna(temp[element].mean(), inplace=True)
 
-    print("\nLes valeurs NaN restantes : ")
+    print("\n NaN values remaining : ")
     print (dataToStudy.isnull().sum())
     
 
@@ -83,12 +84,12 @@ def cleaningData(dataToStudy):
 def dateProcessing(dataToStudy):
 # Question 6.1: Utilisez la fonction to_datetime() pour convertir la chaîne en une date. Utilisez la fonction dtypes pour vérifier si la conversion a été correctement effectuée.
 
-    print("\n reformatage des dates : ")
+    print("\n reformatting dates : ")
     print(dataToStudy["date"])
     dataToStudy['date'] = pd.to_datetime(dataToStudy["date"]) #converting the character date chain to a value of type "date"
     print(dataToStudy["date"])
 
-    print("\nConversion de la chaîne de caractère en valeur de type 'date' :")
+    print("\nConverting the character string to a 'date' type value :")
     print(dataToStudy.select_dtypes(include='datetime').columns)
 
 
@@ -133,9 +134,9 @@ def main():
         print("String attribute : "+element)  #Displays each element into the console
 
 #Question 3.3 : Avons-nous d'informations sur les dates ?
-    print("Type de l'attribut date, il s'agit ici d'un type object signifiant qu'il s'agit d'un string et non f'un type 'date'")
+    print("Type of the date attribute : ")
     print(data.CET.dtype)
-    
+    print("this is a type 'object' meaning that it is a string and not a 'date type")
 
 
 # Question 3.4 : Y a-t-il un attribut vide (NaN)? (utiliser la fonction isnull())
