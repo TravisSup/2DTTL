@@ -1,3 +1,4 @@
+# Question 1.1 (0,5 point) : Initialiser l'environnement pandas, numpy, seaborn et matplotlib.pylot.
 import os
 import webbrowser as wb
 import matplotlib as mp
@@ -9,12 +10,18 @@ import seaborn as sb
 def narrowSelection(dataToStudy):  
     print("\nRenommage des attribut : \n")
     print(dataToStudy) #Displays the dataframe
+    
+    # Question 4.3 (1 point) : Utilisez la fonction describe() pour voir les détails de vos données filtrées. Observez les informations et trouvez l'aberration.
     print("\nDétail des données : \n")
     print(dataToStudy.describe()) #Applies the describe method to the dataframe and displays it
     print("\nDétail des 'events' : \n")
+    
+    # Question 4.4 (0,5 point) : Quel attribut présente une anomalie ?
     print(dataToStudy["Events"].describe()) #Applies the describe method to the Events attribute of the dataframe and displays it
-    print("\nL'attribut présentant une anomalie est la température")
-    sb.boxplot(data=dataToStudy["MaxTemp"].describe(), showfliers = False) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph
+    print("\nL'attribut présentant une anomalie est la température, il y a une valeur aberrante")
+    
+    # Question 4.5 (1 point) : Utilisez Seaborn pour tracer un boxplot de l'attribut anormal. Qu'observez-vous ? Combien y a-t-il de valeurs aberrantes ?
+    sb.boxplot(data=dataToStudy["MaxTemp"]) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph
     mp.pyplot.show()
 
 
@@ -22,13 +29,19 @@ def narrowSelection(dataToStudy):
 def cleaningData(dataToStudy): 
     print("""\nNous avons retenu les valeurs suivantes à enlever de notre série de donnée : \n 
     - La température maximum atteinte (80°C) \n
-    - Le nombre de valeurs (Il n'y a pas lieu de l'afficher sur le Boxplot.De plus, si nous l'affichons, cette valeur sera un outflier)\n""") #Displays Text
+    - Toute les valeurs des attributs étant dans cet intervalles : [Q1 - 1.5(Q3-Q1), Q1 + 1.5(Q3-Q1)]\n""") #Displays Text
 
     #sb.boxplot(data=dataToStudy["MaxTemp"].describe(), showfliers = False) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph
     #mp.pyplot.show()
-    
-    cleanedData = dataToStudy.drop(dataToStudy["MaxTemp"].idxmax())
-    sb.boxplot(data=cleanedData.describe(), showfliers = False) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph   
+    sb.boxplot(data=dataToStudy) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph   
+    mp.pyplot.show()
+    #cleanedData["MaxTemp"] = dataToStudy["MaxTemp"].drop(dataToStudy["MaxTemp"] != 80)
+    filtDataToStudy = dataToStudy.drop(["Events", "date"], axis=1)
+    quantFiltDataToStudy = filtDataToStudy.quantile([0.25, 0.75])
+    filtDataToStudy = filtDataToStudy.apply(lambda x: x[(x>quantFiltDataToStudy.loc[0.25,x.name]-1.5*(quantFiltDataToStudy.loc[0.75, x.name]-quantFiltDataToStudy.loc[0.25, x.name]))\
+         & (x<quantFiltDataToStudy.loc[0.25,x.name]+1.5*(quantFiltDataToStudy.loc[0.75, x.name]-quantFiltDataToStudy.loc[0.25, x.name]))])
+    cleanedData = pd.concat([dataToStudy.date, filtDataToStudy, dataToStudy.Events])
+    sb.boxplot(data=cleanedData) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph   
     mp.pyplot.show()
 
     print("\nSans dropna : ")
@@ -88,34 +101,48 @@ def dateProcessing(dataToStudy):
 
 #Initialisation
 def main():
+    # Question 1.2 (0,5 point) : Créer une variable d’utilisation nommée data à partir de l'import des données de weather_madrid.csv. Elle pourra servir pour l’ensemble du projet.
     os.chdir(os.path.dirname (__file__)) #redefine the workspace in wich the python file is run
     data = pd.read_csv('weather_madrid.csv', sep=',') #reads the csv file and stores the content into a variable
-    myDataFrame = pd.DataFrame(data) #creates a data frame structure with the data from the csv file contained in the data variable
+    
+    # Question 2.1 (1 point) : Créer une page de vue des données en html. Vous pouvez limiter votre page à quelques lignes.
     fichier = open("index.html", "w") #opens / creates a file if he doesn't exist 
-    fichier.write(myDataFrame.to_html(max_rows=10)) #writes the first 10 rows from the data wich contains the csv data into the html file 
+    fichier.write(data.to_html(max_rows=10)) #writes the first 10 rows from the data wich contains the csv data into the html file 
     fichier.close() #stops the writing of new data into the html file
+
+    # Question 2.2 (1 point) : Faites une instruction pour ouvrir votre page web html de la question 2.1 dans un navigateur.
     wb.open("index.html")
 
-    numericAttribute = myDataFrame.select_dtypes(include='number').columns #creates a series that contains the name of the attributes/columns that are filled with the type number 
-    nonNumericAttribute = myDataFrame.select_dtypes(include='object').columns #creates a series that contains the name of the attributes/columns that are filled with the type strings 
-    
+    # Question 3.1 (0.5 point) : Quels sont les attributs numériques (quantitatifs) ?
+    numericAttribute = data.select_dtypes(include='number').columns #creates a series that contains the name of the attributes/columns that are filled with the type number 
     allElement = "" #creates a variable 
     for element in numericAttribute: #iterates through the numericAttribute series
         allElement += element+", "  #add each elements of the series and adds it to the string "allElements"
     print("Numeric attribute : "+allElement) #Displays each element into the console
     print("\n")
+
+    # Question 3.2 (0.5 point) : Quels sont les attributs qui ne sont pas numériques (cathégoriques) ?
+    nonNumericAttribute = data.select_dtypes(exclude='number').columns #creates a series that contains the name of the attributes/columns that are filled with the type strings 
+    
     for element in nonNumericAttribute: #iterates through the nonNumericAttribute series
         print("String attribute : "+element)  #Displays each element into the console
-
     
-    temp = myDataFrame.isnull().any() #creates a series that returns true or false based of if there are null values in the data
+    # Question 3.3 (0.5 point) : Avons-nous d'informations sur les dates ?
+    """Ne pas oublier la question"""
+
+    # Question 3.4 (0.5 point) : Y a-t-il un attribut vide (NaN)? (utiliser la fonction isnull())
+    temp = data.isnull().any() #creates a series that returns true or false based of if there are null values in the data
     if not(temp.all()): #checks if there are 'True'statements in the series temps which signifies that there are null values in the csv file
         print("Yes, there are some NaN elements") #print yes if there are null values
     
-
+    # Question 4.1 (1 point) : Créer un nouveau dataFrame avec ces attributs.
     dataToStudy = pd.DataFrame(data= data, columns=["CET", "Mean TemperatureC", "Min TemperatureC", "Max TemperatureC", "Mean Humidity", "Max Humidity", "Min Humidity", "MeanDew PointC", "Min DewpointC", "Dew PointC", "CloudCover", "Events"]) #creates a new dataframe based 
+    
+    # Question 4.2 (1 point) : Renommer les attributs pour les rendre plus faciles à manipuler : "date", "MeanTemp", "MinTemp", "MaxTemp", "MeanHum", "MaxHum", "MinHum", "MeanDew", "MinDew", "Dew", "CloudCover", "Events"
     dataToStudy.rename(columns = {"CET":"date", "Mean TemperatureC":"Meantemp","Min TemperatureC":"MinTemp","Max TemperatureC":"MaxTemp","Mean Humidity":"MeanHum","Max Humidity":"MaxHum","Min Humidity":"MinHum","MeanDew PointC":"MeanDew","Min DewpointC":"MinDew","Dew PointC":"Dew",}, inplace = True) #Renames
     #the attributes
+
+
     narrowSelection(dataToStudy)
     cleaningData(dataToStudy)
     dateProcessing(dataToStudy)
