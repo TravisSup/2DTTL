@@ -151,7 +151,7 @@ def main():
     
 
 #Question 4.2 : Renommer les attributs pour les rendre plus faciles à manipuler
-    dataToStudy.rename(columns = {"CET":"date", "Mean TemperatureC":"Meantemp","Min TemperatureC":"MinTemp","Max TemperatureC":"MaxTemp","Mean Humidity":"MeanHum","Max Humidity":"MaxHum","Min Humidity":"MinHum","MeanDew PointC":"MeanDew","Min DewpointC":"MinDew","Dew PointC":"Dew",}, inplace = True) 
+    dataToStudy.rename(columns = {"CET":"date", "Mean TemperatureC":"MeanTemp","Min TemperatureC":"MinTemp","Max TemperatureC":"MaxTemp","Mean Humidity":"MeanHum","Max Humidity":"MaxHum","Min Humidity":"MinHum","MeanDew PointC":"MeanDew","Min DewpointC":"MinDew","Dew PointC":"Dew",}, inplace = True) 
     #Renames the attributes
 
 #calls the differents functions :

@@ -1,4 +1,4 @@
-,date,Meantemp,MinTemp,MaxTemp,MeanHum,MaxHum,MinHum,MeanDew,MinDew,Dew,CloudCover,Events,year,day
+,date,MeanTemp,MinTemp,MaxTemp,MeanHum,MaxHum,MinHum,MeanDew,MinDew,Dew,CloudCover,Events,year,day
 0,1997-01-01,4.0,2.0,80.0,95.0,100.0,76.0,3.0,2.0,5.0,6.0,NoEvent,1997,1
 1,1997-01-02,3.0,0.0,7.0,92.0,100.0,71.0,3.0,0.0,6.0,5.0,Rain,1997,2
 2,1997-01-03,3.0,2.0,5.0,85.0,100.0,70.0,1.0,-1.0,5.0,6.0,Rain-Snow,1997,3
