@@ -133,7 +133,9 @@ def main():
         print("String attribute : "+element)  #Displays each element into the console
 
 #Question 3.3 : Avons-nous d'informations sur les dates ?
-    print(data.select_dtypes(include='datetime'))
+    print("Type de l'attribut date, il s'agit ici d'un type object signifiant qu'il s'agit d'un string et non f'un type 'date'")
+    print(data.CET.dtype)
+    
 
 
 # Question 3.4 : Y a-t-il un attribut vide (NaN)? (utiliser la fonction isnull())
