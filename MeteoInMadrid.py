@@ -18,7 +18,7 @@ def narrowSelection(dataToStudy):
 
 
 # Question 4.3 : Utilisez la fonction describe() pour voir les détails de vos données filtrées. Observez les informations et trouvez l'aberration.
-    sb.boxplot(data=dataToStudy["MaxTemp"].describe(), showfliers = False) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph
+    sb.boxplot(data=dataToStudy["MaxTemp"]) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph
     mp.pyplot.show()
 
 
