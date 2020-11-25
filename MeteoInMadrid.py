@@ -109,12 +109,11 @@ def main():
 
 # Question 1.2 : Créer une variable d’utilisation nommée data à partir de l'import des données de weather_madrid.csv. 
     data = pd.read_csv('weather_madrid.csv', sep=',') #reads the csv file and stores the content into a variable
-    myDataFrame = pd.DataFrame(data) #creates a data frame structure with the data from the csv file contained in the data variable
 
 
 # Question 2.1 : Créer une page de vue des données en html. Vous pouvez limiter votre page à quelques lignes.
     fichier = open("index.html", "w") #opens / creates a file if he doesn't exist 
-    fichier.write(myDataFrame.to_html(max_rows=10)) #writes the first 10 rows from the data wich contains the csv data into the html file 
+    fichier.write(data.to_html(max_rows=10)) #writes the first 10 rows from the data wich contains the csv data into the html file 
     fichier.close() #stops the writing of new data into the html file
 
 
@@ -122,8 +121,8 @@ def main():
     wb.open("index.html")
 
 # Question 3.1 / 3.2 : Quels sont les attributs numériques (quantitatifs) et les attributs qui ne sont pas numériques (cathégoriques) ?
-    numericAttribute = myDataFrame.select_dtypes(include='number').columns #creates a series that contains the name of the attributes/columns that are filled with the type number 
-    nonNumericAttribute = myDataFrame.select_dtypes(include='object').columns #creates a series that contains the name of the attributes/columns that are filled with the type strings 
+    numericAttribute = data.select_dtypes(include='number').columns #creates a series that contains the name of the attributes/columns that are filled with the type number 
+    nonNumericAttribute = data.select_dtypes(include='object').columns #creates a series that contains the name of the attributes/columns that are filled with the type strings 
     
     allElement = "" #creates a variable 
     for element in numericAttribute: #iterates through the numericAttribute series
@@ -134,12 +133,11 @@ def main():
         print("String attribute : "+element)  #Displays each element into the console
 
 #Question 3.3 : Avons-nous d'informations sur les dates ?
-
-
+    print(data.select_dtypes(include='datetime'))
 
 
 # Question 3.4 : Y a-t-il un attribut vide (NaN)? (utiliser la fonction isnull())
-    temp = myDataFrame.isnull().any() #creates a series that returns true or false based of if there are null values
+    temp = data.isnull().any() #creates a series that returns true or false based of if there are null values
     if not(temp.all()): #checks if there are 'True'statements in the series temps which signifies that there are null values in the dataframe
         print("Yes, there are some NaN elements") #print yes if there are null values
     
