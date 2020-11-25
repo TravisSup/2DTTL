@@ -1,3 +1,4 @@
+# Question 1.1 : Initialiser l'environnement pandas, numpy, seaborn et matplotlib.pylot.
 import os
 import webbrowser as wb
 import matplotlib as mp
@@ -14,41 +15,60 @@ def narrowSelection(dataToStudy):
     print("\nDétail des 'events' : \n")
     print(dataToStudy["Events"].describe()) #Applies the describe method to the Events attribute of the dataframe and displays it
     print("\nL'attribut présentant une anomalie est la température")
+
+
+# Question 4.3 : Utilisez la fonction describe() pour voir les détails de vos données filtrées. Observez les informations et trouvez l'aberration.
     sb.boxplot(data=dataToStudy["MaxTemp"].describe(), showfliers = False) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph
     mp.pyplot.show()
 
 
-
 def cleaningData(dataToStudy): 
+
+# Question 4.4 : Quel attribut présente une anomalie ?
     print("""\nNous avons retenu les valeurs suivantes à enlever de notre série de donnée : \n 
     - La température maximum atteinte (80°C) \n
     - Le nombre de valeurs (Il n'y a pas lieu de l'afficher sur le Boxplot.De plus, si nous l'affichons, cette valeur sera un outflier)\n""") #Displays Text
-
-    #sb.boxplot(data=dataToStudy["MaxTemp"].describe(), showfliers = False) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph
-    #mp.pyplot.show()
     
-    cleanedData = dataToStudy.drop(dataToStudy["MaxTemp"].idxmax())
+    """cleanedData = dataToStudy.drop(dataToStudy["MaxTemp"].idxmax())
     sb.boxplot(data=cleanedData.describe(), showfliers = False) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph   
+    mp.pyplot.show()"""
+    
+#Question 4.5 Utilisez Seaborn pour tracer un boxplot de l'attribut anormal. Qu'observez-vous ? Combien y a-t-il de valeurs aberrantes ?
+    sb.boxplot(y=data['maxtemp'])
+    cleanedData = dataToStudy['Maxtemp'].describe()
+    seabord.boxplot(y=cleanedData('MaxTemp'))
+    mp.pyplot.show()
+    
+#Question 5.1 Traiter les valeurs aberrantes : Corriger le(s) point(s) aberrant(s) et expliquer votre choix.
+    cleanedData = cleanedData[ 29 + (29 - 16) * 1.5 > cleanedData.MaxTemp] 
+    cleanedData = cleanedData[ 13 + (29 - 16) * 1.5 < cleanedData.MaxTemp] 
+    print(cleanedData['Maxtemp'].describe())
+    sb.boxplot(y=data['MaxTemp'])
     mp.pyplot.show()
 
+# Question 5.3 : Que se passe-t-il si vous utilisez la fonction dropna() ?
     print("\nSans dropna : ")
     print (dataToStudy.isnull().sum()) #Makes th summ of the null values present in the dataFrame
     print("\nAvec dropna : ")
-    print(dataToStudy.dropna().isnull().sum()) #Makes th summ of the null values present in the dataFrame after the removing of Nan values
+    print(dataToStudy.dropna().isnull().sum()) #Makes th sum of the null values present in the dataFrame after the removing of Nan values
     print("La fonction dropna supprime les valeurs Nan de la dataFrame")
+# Question 5.4 : Pensez-vous que c'est une bonne idée d'utiliser la fonction dropna()   
     print("""La fonction dropna n'est pas pertinente à utiliser dans notre cas car elle fausse nos résultats statistique, 
     elle diminue le nombre de donnée composant la série ce qui faussera les analyse.""")
 
+# Question 5.5 : Avez-vous des valeurs manquantes pour l'attribut "Events" ? Combien ?
     print("\nOui il y a des valeurs null qui sont au nombre de : ")    
     numberOfNanValue = 0
     for content in dataToStudy.drop(["date"], axis=1).isnull().sum(): # loop that displays the sum of the Nan values for each column where there are some
         numberOfNanValue+=content    
     print(numberOfNanValue) #Displays Text
 
+# Question 5.6 : Remplacez tous les événements NaN par "NoEvent" pour indiquer qu'aucun événement ne s'est produit.
     print("\n Remplacement de tout les NaN dans l'attribut 'Events' par NoEvent : ")
     dataToStudy["Events"].fillna('NoEvent', inplace = True)
     print(dataToStudy)
-    
+
+# Question 5.7 : Expliquez votre choix lorsque vous remplissez toutes les valeurs manquantes.
     print("""\n Remplacement de tous les NaN dans les attributs 'Temperature, Humididty, Dew, CloudCover' par 
     la valeur moyenne signifiant que c'était un jour 'normal'(il ne s'est rien passé d'extraordinaire) : """)
     
@@ -89,13 +109,22 @@ def dateProcessing(dataToStudy):
 #Initialisation
 def main():
     os.chdir(os.path.dirname (__file__)) #redefine the workspace in wich the python file is run
+
+# Question 1.2 : Créer une variable d’utilisation nommée data à partir de l'import des données de weather_madrid.csv. 
     data = pd.read_csv('weather_madrid.csv', sep=',') #reads the csv file and stores the content into a variable
     myDataFrame = pd.DataFrame(data) #creates a data frame structure with the data from the csv file contained in the data variable
+
+
+# Question 2.1 : Créer une page de vue des données en html. Vous pouvez limiter votre page à quelques lignes.
     fichier = open("index.html", "w") #opens / creates a file if he doesn't exist 
     fichier.write(myDataFrame.to_html(max_rows=10)) #writes the first 10 rows from the data wich contains the csv data into the html file 
     fichier.close() #stops the writing of new data into the html file
+
+
+# Question 2.2 : Faites une instruction pour ouvrir votre page web html de la question 2.1 dans un navigateur.
     wb.open("index.html")
 
+# Question 3.1 / 3.2 : Quels sont les attributs numériques (quantitatifs) et les attributs qui ne sont pas numériques (cathégoriques) ?
     numericAttribute = myDataFrame.select_dtypes(include='number').columns #creates a series that contains the name of the attributes/columns that are filled with the type number 
     nonNumericAttribute = myDataFrame.select_dtypes(include='object').columns #creates a series that contains the name of the attributes/columns that are filled with the type strings 
     
@@ -108,15 +137,28 @@ def main():
         print("String attribute : "+element)  #Displays each element into the console
 
     
-    temp = myDataFrame.isnull().any() #creates a series that returns true or false based of if there are null values in the data
-    if not(temp.all()): #checks if there are 'True'statements in the series temps which signifies that there are null values in the csv file
+
+#Question 3.3 : Avons-nous d'informations sur les dates ?
+
+
+
+# Question 3.4 : Y a-t-il un attribut vide (NaN)? (utiliser la fonction isnull())
+    temp = myDataFrame.isnull().any() #creates a series that returns true or false based of if there are null values
+    if not(temp.all()): #checks if there are 'True'statements in the series temps which signifies that there are null values in the dataframe
         print("Yes, there are some NaN elements") #print yes if there are null values
     
 
-    dataToStudy = pd.DataFrame(data= data, columns=["CET", "Mean TemperatureC", "Min TemperatureC", "Max TemperatureC", "Mean Humidity", "Max Humidity", "Min Humidity", "MeanDew PointC", "Min DewpointC", "Dew PointC", "CloudCover", "Events"]) #creates a new dataframe based 
-    dataToStudy.rename(columns = {"CET":"date", "Mean TemperatureC":"Meantemp","Min TemperatureC":"MinTemp","Max TemperatureC":"MaxTemp","Mean Humidity":"MeanHum","Max Humidity":"MaxHum","Min Humidity":"MinHum","MeanDew PointC":"MeanDew","Min DewpointC":"MinDew","Dew PointC":"Dew",}, inplace = True) #Renames
-    #the attributes
-    narrowSelection(dataToStudy)
+# Question 4.1 : Créer un nouveau dataFrame avec ces attributs.
+    dataToStudy = pd.DataFrame(data= data, columns=["CET", "Mean TemperatureC", "Min TemperatureC", "Max TemperatureC", "Mean Humidity", "Max Humidity", "Min Humidity", "MeanDew PointC", "Min DewpointC", "Dew PointC", "CloudCover", "Events"]) 
+    #creates a new dataframe  
+    
+
+#Question 4.2 : Renommer les attributs pour les rendre plus faciles à manipuler
+    dataToStudy.rename(columns = {"CET":"date", "Mean TemperatureC":"Meantemp","Min TemperatureC":"MinTemp","Max TemperatureC":"MaxTemp","Mean Humidity":"MeanHum","Max Humidity":"MaxHum","Min Humidity":"MinHum","MeanDew PointC":"MeanDew","Min DewpointC":"MinDew","Dew PointC":"Dew",}, inplace = True) 
+    #Renames the attributes
+
+#calls the differents functions :
+    narrowSelection(dataToStudy)  
     cleaningData(dataToStudy)
     dateProcessing(dataToStudy)
 
