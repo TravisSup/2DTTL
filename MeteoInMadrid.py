@@ -39,15 +39,17 @@ def cleaningData(dataToStudy):
     quantFiltDataToStudy = filtDataToStudy.quantile([0.25, 0.75]) #Calculate the quartiles for the different attributes
     filtDataToStudy = filtDataToStudy.apply(lambda x: x[(x>quantFiltDataToStudy.loc[0.25,x.name]-1.5*(quantFiltDataToStudy.loc[0.75, x.name]-quantFiltDataToStudy.loc[0.25, x.name]))\
          & (x<quantFiltDataToStudy.loc[0.25,x.name]+1.5*(quantFiltDataToStudy.loc[0.75, x.name]-quantFiltDataToStudy.loc[0.25, x.name]))])
-    cleanedData = pd.concat([dataToStudy.date, filtDataToStudy, dataToStudy.Events]) #Applies the formula to remove aberrant data from the graph
+    cleanedData = pd.concat([dataToStudy.date, filtDataToStudy, dataToStudy.Events], axis = 1) #Applies the formula to remove aberrant data from the graph
+    print("cleanedData : ")
+    print(cleanedData)
     sb.boxplot(data=cleanedData, order=["MeanTemp", "MinTemp", "MaxTemp","MeanHum", "MaxHum", "MinHum","MeanDew", "MinDew", "Dew"]) #Applies the describe method to the MaxTemp attribute of the dataframe and displays it while removing flier from the graph   
     mp.pyplot.show() #Displays the graph 
 
 # Question 5.3 : Que se passe-t-il si vous utilisez la fonction dropna() ?
     print("\Without dropna : ")
-    print (dataToStudy.isnull().sum()) #Makes th summ of the null values present in the dataFrame
+    print (cleanedData.isnull().sum()) #Makes th summ of the null values present in the dataFrame
     print("\With dropna : ")
-    print(dataToStudy.dropna().isnull().sum()) #Makes th sum of the null values present in the dataFrame after the removing of Nan values
+    print(cleanedData.dropna().isnull().sum()) #Makes th sum of the null values present in the dataFrame after the removing of Nan values
     print("The dropna function removes NaN values from a dataframe")
 # Question 5.4 : Pensez-vous que c'est une bonne idée d'utiliser la fonction dropna()   
     print("""The dropna function isn't relevant for our case because it can distort our statistics, 
@@ -57,27 +59,28 @@ def cleaningData(dataToStudy):
 # Question 5.5 : Avez-vous des valeurs manquantes pour l'attribut "Events" ? Combien ?
     print("\nYes there are 'Null' values : ")    
     numberOfNanValue = 0
-    for content in dataToStudy.drop(["date"], axis=1).isnull().sum(): # loop that displays the sum of the Nan values for each column where there are some
+    for content in cleanedData.drop(["date"], axis=1).isnull().sum(): # loop that displays the sum of the Nan values for each column where there are some
         numberOfNanValue+=content    
     print(numberOfNanValue) #Displays Text
 
 # Question 5.6 : Remplacez tous les événements NaN par "NoEvent" pour indiquer qu'aucun événement ne s'est produit.
     print("\n Replacement of all NaN values in the 'Events' attribute by NoEvent : ")
-    dataToStudy["Events"].fillna('NoEvent', inplace = True)
-    print(dataToStudy)
+    cleanedData["Events"].fillna('NoEvent', inplace = True)
+    print(cleanedData)
 
 # Question 5.7 : Expliquez votre choix lorsque vous remplissez toutes les valeurs manquantes.
     print("""\n Replacement of all NaN values in the 'Temperature, Humididty, Dew, CloudCover' attributes by  
     the mean value meaning that it was a 'normal' day (nothing unexpected happened ) : """)
     
    
-    temp = dataToStudy.drop(["date", "Events"] ,axis=1)
+    temp = cleanedData.drop(["date", "Events"] ,axis=1)
     
     for element in temp.columns:
-        dataToStudy[element].fillna(temp[element].mean(), inplace=True)
+        cleanedData[element].fillna(temp[element].mean(), inplace=True)
 
     print("\n NaN values remaining : ")
-    print (dataToStudy.isnull().sum())
+    print (cleanedData.isnull().sum())
+    return cleanedData
     
 
 
@@ -102,7 +105,7 @@ def dateProcessing(dataToStudy):
 
 # Question 6.4 : Écrivez les données résultantes dans un fichier nommé weather_madrid_clean.csv.
 
-    dataToStudy.to_csv('weather_madrid_preocessed.csv') #Creates a csv file from the dataToStudy dataframe
+    dataToStudy.to_csv('weather_madrid_clean.csv') #Creates a csv file from the dataToStudy dataframe
 
 #Initialisation
 def main():
@@ -156,8 +159,8 @@ def main():
 
 #calls the differents functions :
     narrowSelection(dataToStudy)  
-    cleaningData(dataToStudy)
-    dateProcessing(dataToStudy)
+    cleanedData = cleaningData(dataToStudy)
+    dateProcessing(cleanedData)
 
 
 

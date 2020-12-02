@@ -1,3 +1,0 @@
-Création d'un espace de travail (git + liveshare)
-mise a jour de notre version de python (3.8 ----> 3.9)
-installe librairie 
